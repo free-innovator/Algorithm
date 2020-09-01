@@ -13,7 +13,7 @@ require("fs")
     .readFileSync("dev/stdin")
     .toString()
     .trim()
-    .split(" ")
+    .split(/\s+/)
     .map((x) => +x);
 
 // 여러 줄, 숫자 한 개
@@ -21,7 +21,7 @@ require("fs")
     .readFileSync("dev/stdin")
     .toString()
     .trim()
-    .split("\n")
+    .split(/\n+/)
     .map((x) => +x);
 
 // 여러 줄
@@ -29,7 +29,7 @@ require("fs")
     .readFileSync("dev/stdin")
     .toString()
     .trim()
-    .split("\n")
+    .split(/\n+/)
     .map((x) => x.trim());
 
 // 여러 줄, 띄어쓰기 숫자 여러 개
@@ -37,11 +37,11 @@ require("fs")
     .readFileSync("dev/stdin")
     .toString()
     .trim()
-    .split("\n")
+    .split(/\n+/)
     .map((x) =>
         x
             .trim()
-            .split(" ")
+            .split(/\s+/)
             .map((x) => +x)
     );
 
@@ -50,11 +50,11 @@ require("fs")
     .readFileSync("dev/stdin")
     .toString()
     .trim()
-    .split("\n")
+    .split(/\n+/)
     .map((x) =>
         x
             .trim()
-            .split(" ")
+            .split(/\s+/)
             .map((x) => x.trim())
     );
 
@@ -104,7 +104,7 @@ const f0nd = (x, n) => {
     while ((t = Math.floor(t * 0.1))) digit++;
     return new Array(n - digit + 1).join("0") + x;
 };
-const reverse = (x) => {
+const reverseCiphers = (x) => {
     let ret = 0;
     while (x) {
         ret *= 10;
@@ -112,6 +112,14 @@ const reverse = (x) => {
         x = Math.floor(x * 0.1);
     }
     return ret;
+};
+const sumCiphers = (x) => {
+    let sumv = 0;
+    while (x) {
+        sumv += x % 10;
+        x = Math.floor(x * 0.1);
+    }
+    return sumv;
 };
 function printArr2D(arr) {
     let output = "";
@@ -150,3 +158,9 @@ const { heapTotal, heapUsed, external } = process.memoryUsage();
 console.log("=====================================================");
 console.log(Math.floor((heapTotal + heapUsed + external) / 1024) + "KB");
 console.log(process.memoryUsage());
+
+// ==================================================
+//  assert
+// ==================================================
+const assert = require("assert");
+assert.ok();
