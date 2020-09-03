@@ -152,6 +152,36 @@ process.stdin.on("end", function () {
 });
 
 // ==================================================
+//  process.stdin.on + readFileSync
+// ==================================================
+function solution(input) {
+    const data = input.toString();
+    let output = "";
+    return output;
+}
+
+let input = null;
+let isFinishInput = false;
+try {
+    input = require("fs").readFileSync("dev/stdin");
+    isFinishInput = true;
+} catch (e) {
+    input = "";
+    process.stdin.on("data", function (chunk) {
+        input += chunk;
+    });
+    process.stdin.on("end", function () {
+        isFinishInput = true;
+    });
+}
+setInterval(function () {
+    if (isFinishInput) {
+        process.stdout.write(solution(input));
+        process.exit(0);
+    }
+});
+
+// ==================================================
 //  process.memoryUsage()
 // ==================================================
 const { heapTotal, heapUsed, external } = process.memoryUsage();
