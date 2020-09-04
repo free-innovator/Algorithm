@@ -3,38 +3,34 @@
 // ==================================================
 
 // 숫자 한 개
-+require("fs").readFileSync("dev/stdin").toString();
+const data = +input.toString();
 
 // 단어 한 개
-require("fs").readFileSync("dev/stdin").toString().trim();
+const data = input.toString().trim();
 
 // 한 줄, 숫자 여러 개
-require("fs")
-    .readFileSync("dev/stdin")
+const data = input
     .toString()
     .trim()
     .split(/\s+/)
     .map((x) => +x);
 
 // 여러 줄, 숫자 한 개
-require("fs")
-    .readFileSync("dev/stdin")
+const data = input
     .toString()
     .trim()
     .split(/\n+/)
     .map((x) => +x);
 
 // 여러 줄
-require("fs")
-    .readFileSync("dev/stdin")
+const data = input
     .toString()
     .trim()
     .split(/\n+/)
     .map((x) => x.trim());
 
 // 여러 줄, 띄어쓰기 숫자 여러 개
-require("fs")
-    .readFileSync("dev/stdin")
+const data = input
     .toString()
     .trim()
     .split(/\n+/)
@@ -46,8 +42,7 @@ require("fs")
     );
 
 // 여러 줄, 띄어쓰기
-require("fs")
-    .readFileSync("dev/stdin")
+const data = input
     .toString()
     .trim()
     .split(/\n+/)
@@ -99,12 +94,25 @@ process.stdout.write("GOOD");
 // ==================================================
 //  function
 // ==================================================
-const f0nd = (x, n) => {
+function gcd(a, b) {
+    if (a < b) [a, b] = [b, a];
+    while (b) [a, b] = [b, a % b];
+    return a;
+}
+
+function f0nd(x, n) {
     let [t, digit] = [x, 1];
     while ((t = Math.floor(t * 0.1))) digit++;
     return new Array(n - digit + 1).join("0") + x;
-};
-const reverseCiphers = (x) => {
+}
+function formatTime(time) {
+    let [h, m, s] = [0, 0, time];
+    [m, s] = [Math.floor(s / 60), s % 60];
+    [h, m] = [Math.floor(m / 60), m % 60];
+    return `${f0nd(h, 2)}:${f0nd(m, 2)}:${f0nd(s, 2)}`;
+}
+
+function reverseNumber(x) {
     let ret = 0;
     while (x) {
         ret *= 10;
@@ -112,15 +120,40 @@ const reverseCiphers = (x) => {
         x = Math.floor(x * 0.1);
     }
     return ret;
-};
-const sumCiphers = (x) => {
+}
+
+function sumCiphers(x) {
     let sumv = 0;
     while (x) {
         sumv += x % 10;
         x = Math.floor(x * 0.1);
     }
     return sumv;
-};
+}
+
+function isExistNumber(x, n) {
+    while (x) {
+        if (x % 10 === n) return true;
+        x = Math.floor(x * 0.1);
+    }
+    return false;
+}
+function isExistNumbers(x, numArr) {
+    while (x) {
+        if (numArr.indexOf(x % 10) >= 0) return true;
+        x = Math.floor(x * 0.1);
+    }
+    return false;
+}
+function getCntNumbers(x, numArr) {
+    let cnt = 0;
+    while (x) {
+        if (numArr.indexOf(x % 10) >= 0) cnt++;
+        x = Math.floor(x * 0.1);
+    }
+    return cnt;
+}
+
 function printArr2D(arr) {
     let output = "";
     for (let i = 0; i < arr.length; i++) {
@@ -131,6 +164,7 @@ function printArr2D(arr) {
     }
     process.stdout.write(output);
 }
+
 function printArr(arr) {
     let output = "";
     for (let i = 0; i < arr.length; i++) {
@@ -138,6 +172,21 @@ function printArr(arr) {
     }
     process.stdout.write(output + "\n");
 }
+
+function precisionDivide(a, b) {
+    [a, b] = [BigInt(a), BigInt(b)];
+    let ret = `${a / b}.`;
+    for (let i = 0; i < 6 && a; i++) {
+        a = (a % b) * 10n;
+        ret += a / b;
+    }
+    return ret;
+}
+
+// ==================================================
+//  readFileSync
+// ==================================================
+const input = require("fs").readFileSync("dev/stdin");
 
 // ==================================================
 //  process.stdin.on
@@ -161,21 +210,21 @@ function solution(input) {
 }
 
 let input = null;
-let isFinishInput = false;
+let isFinish = false;
 try {
     input = require("fs").readFileSync("dev/stdin");
-    isFinishInput = true;
+    isFinish = true;
 } catch (e) {
     input = "";
     process.stdin.on("data", function (chunk) {
         input += chunk;
     });
     process.stdin.on("end", function () {
-        isFinishInput = true;
+        isFinish = true;
     });
 }
 setInterval(function () {
-    if (isFinishInput) {
+    if (isFinish) {
         process.stdout.write(solution(input));
         process.exit(0);
     }
