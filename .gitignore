@@ -1,3 +1,8 @@
+#folder
+.vscode/
+_test/
+
+#file
 report.*
 ~$*
 *.xlsx
