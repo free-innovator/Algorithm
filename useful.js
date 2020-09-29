@@ -3,28 +3,29 @@
 // ==================================================
 
 // 숫자 한 개
-+input.toString();
++require("fs").readFileSync("dev/stdin").toString()
 
 // 단어 한 개
-input.toString().trim();
+require("fs").readFileSync("dev/stdin").toString().trim()
 
 // 한 줄, 숫자 여러 개
-input.toString().trim().split(/\s+/).map((x) => +x);
+require("fs").readFileSync("dev/stdin").toString().trim().split(/\s+/).map((x) => +x)
 
 // 개행 구분 없이 일렬로 숫자배열을 만들고 싶을 때
-input.toString().trim().split(/\W+/).map((x) => +x);
+require("fs").readFileSync("dev/stdin").toString().trim().split(/\W+/).map((x) => +x)
 
 // 여러 줄, 숫자 한 개
-input.toString().trim().split(/\n+/).map((x) => +x);
+require("fs").readFileSync("dev/stdin").toString().trim().split(/\n+/).map((x) => +x)
 
 // 여러 줄
-input.toString().trim().split(/\n+/).map((x) => x.trim());
+require("fs").readFileSync("dev/stdin").toString().trim().split(/\n+/)
+require("fs").readFileSync("dev/stdin").toString().trim().split(/\n+/).map((x) => x.trim())
 
 // 여러 줄, 띄어쓰기 숫자 여러 개
-input.toString().trim().split(/\n+/).map((x) => x.trim().split(/\s+/).map((x) => +x));
+require("fs").readFileSync("dev/stdin").toString().trim().split(/\n+/).map((x) => x.trim().split(/\s+/).map((x) => +x))
 
 // 여러 줄, 띄어쓰기
-input.toString().trim().split(/\n+/).map((x) => x.trim().split(/\s+/).map((x) => x.trim()));
+require("fs").readFileSync("dev/stdin").toString().trim().split(/\n+/).map((x) => x.trim().split(/\s+/).map((x) => x.trim()))
 
 // ==================================================
 //  fast search prime
@@ -155,9 +156,9 @@ function getCharDiffOffset(ch1, ch2) {
 }
 function getCharByOffset(ch, offset) {
     if ("a" <= ch && ch <= "z") {
-        return String.fromCharCode(((getCharOffset(ch) + offset) % 26) + "a".charCodeAt(0));
+        return String.fromCharCode(((getCharOffset(ch) + offset + 26) % 26) + "a".charCodeAt(0));
     } else if ("A" <= ch && ch <= "Z") {
-        return String.fromCharCode(((getCharOffset(ch) + offset) % 26) + "A".charCodeAt(0));
+        return String.fromCharCode(((getCharOffset(ch) + offset + 26) % 26) + "A".charCodeAt(0));
     } else return null;
 }
 
@@ -390,6 +391,14 @@ try {
     process.stdin.on("data", function (chunk) { input += chunk });
     process.stdin.on("end", function () { isFinish = true });
 }
+
+// =========================================================== //
+setInterval(function () {
+    process.stdout.write(solution(
+        require("fs").readFileSync("dev/stdin")
+    ));
+    process.exit(0);
+});
 
 
 // ==================================================

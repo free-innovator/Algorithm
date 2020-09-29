@@ -1,25 +1,19 @@
+function getCharOffset(ch) {
+    return ch.charCodeAt(0) - "A".charCodeAt(0);
+}
+function getCharByOffset(ch, offset) {
+    return String.fromCharCode(((getCharOffset(ch) + offset + 26) % 26) + "A".charCodeAt(0));
+}
+
 function solution(data) {
     let output = "";
-
-
+    output += data.split("").map(x => getCharByOffset(x, -3)).join("") + "\n";
     return output;
 }
 
-/* preprocessing */
-let input = null;
-let isFinish = false;
-setInterval(() => {
-    if (!isFinish) return;
+setInterval(function () {
     process.stdout.write(solution(
-        input.toString().trim().split(/\n+/)
+        require("fs").readFileSync("dev/stdin").toString().trim()
     ));
     process.exit(0);
 });
-try {
-    input = require("fs").readFileSync(process.platform !== "win32" ? "dev/stdin" : "input.txt");
-    isFinish = true;
-} catch (e) {
-    input = "";
-    process.stdin.on("data", function (chunk) { input += chunk });
-    process.stdin.on("end", function () { isFinish = true });
-}
