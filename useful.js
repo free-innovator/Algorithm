@@ -180,36 +180,132 @@ function ccw(x2, y2, x3, y3) {
     return (x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1);
 }
 
+
 // ==================================================
-//  stack
+//  FastScanner
 // ==================================================
-const stack = [];
-let si = 0;
-function isEmpty() { return !stack.length; }
-function push(x) { stack[si++] = x; }
-function pop() { return isEmpty() ? null : stack[--si]; }
+function FastScanner() { this._initialize.apply(this, arguments); }
+FastScanner.prototype._initialize = function (input) { Object.assign(this, { _input: input, _index: 0, _length: input.length }); }
+FastScanner.prototype.isNextNumber = function () { return this._input[this._index] & 0x10; }
+FastScanner.prototype.hasNextInt = function () {
+    while (this._index < this._length && !this.isNextNumber()) ++this._index;
+    return this._index < this._length;
+}
+FastScanner.prototype.readInt = function () {
+    let result = 0;
+    while (!this.isNextNumber()) ++this._index;
+    while (this.isNextNumber()) { result = result * 10 + (this._input[this._index] & 0x0f); ++this._index; }
+    return result;
+}
+
+// =========================================================== //
+function FastScanner() { this._initialize.apply(this, arguments); }
+FastScanner.prototype._initialize = function () { this._index = 0; }
+FastScanner.prototype.readInt = function () {
+    let result = 0;
+    while (!(input[this._index] & 0x10)) ++this._index;
+    while (input[this._index] & 0x10) { result = result * 10 + (input[this._index] & 0x0f); ++this._index; }
+    return result;
+}
+
+// ==================================================
+//  Stack # 느림.
+// ==================================================
+// function Stack() { this.initialize.apply(this, arguments); }
+// Stack.prototype.initialize = function (reserveSize) {
+//     this._stack = (reserveSize <= 0) ? [] : new Array(reserveSize);
+//     this._f = -1; // iterator front
+// }
+// Stack.prototype.empty = function () { return this._f < 0; }
+// Stack.prototype.front = function () { return this._stack[this._f]; }
+// Stack.prototype.pop = function () { --this._f; }
+// Stack.prototype.push = function (x) { this._stack[++this._f] = x; }
+
+// =========================================================== //
+function Stack() { this._initialize.apply(this, arguments); }
+Stack.prototype._initialize = function () { this._stack = []; }
+Stack.prototype.empty = function () { return !this._stack.length; }
+Stack.prototype.front = function () { return this._stack[this._stack.length - 1]; }
+Stack.prototype.pop = function () { return this._stack.pop(); }
+Stack.prototype.push = function (x) { this._stack.push(x); }
+Stack.prototype.size = function () { return this._stack.length; }
+
+// ==================================================
+//  Segment Tree
+// ==================================================
+function SegmentTree() { this._initialize.apply(this, arguments); }
+SegmentTree.prototype._initialize = function (leafCount, leafArr) {
+    this._default = 0;
+    this._leafArr = leafArr;
+    this._leafCount = leafCount;
+    this._tree = new Array(2 ** (Math.ceil(Math.log2(leafCount)) + 1));
+
+    leafArr ? this._init(1, 1, leafCount) : this._tree.fill(this._default);
+}
+SegmentTree.prototype._op = function (a, b) { return a + b; }
+SegmentTree.prototype._init = function (node, start, end) {
+    if (start === end) return this._tree[node] = this._leafArr[start - 1] || this._default;
+
+    const mid = Math.floor((start + end) / 2);
+    return this._tree[node] = this._init(node * 2 + 1, mid + 1, end) + this._init(node * 2, start, mid);
+}
+SegmentTree.prototype.update = function (index, val) {
+    const _this = this;
+    function _update(node, start, end) {
+        if (!(start <= index && index <= end)) return _this._tree[node];
+        if (start === end) return _this._tree[node] = _this._op(_this._tree[node], val);
+
+        const mid = Math.floor((start + end) / 2);
+        return _this._tree[node] = _this._op(_update(node * 2, start, mid), _update(node * 2 + 1, mid + 1, end));
+    }
+    _update(1, 1, this._leafCount);
+}
+SegmentTree.prototype.result = function (left, right) {
+    const _this = this;
+    function _result(node, start, end) {
+        if (left > end || right < start) return _this._default;
+        if (left <= start && end <= right) return _this._tree[node];
+
+        const mid = Math.floor((start + end) / 2);
+        return _this._op(_result(node * 2, start, mid), _result(node * 2 + 1, mid + 1, end));
+    }
+    return _result(1, 1, this._leafCount);
+}
 
 // ==================================================
 //  Queue
 // ==================================================
-const queue = new Array(N + 1);
-let [qb, qf] = [0, 0];
-function isEmpty() { return qb === qf; }
-function front() { return isEmpty() ? null : queue[qf]; }
-function pop() { return isEmpty() ? null : dp[qb++]; }
-function push(x) { dp[qf++] = x; }
+const queue = [];
+function empty() { return !queue.length; }
+function front() { return queue[0]; }
+function back() { return queue[queue.length - 1]; }
+function pop() { return queue.shift(); }
+function push(x) { queue.push(x); }
+function size() { return queue.length; }
 
 // =========================================================== //
-function Queue() { this.initialize.apply(this, arguments); }
-Queue.prototype.initialize = function (reserveSize) {
+function Queue() { this._initialize.apply(this, arguments); }
+Queue.prototype._initialize = function (reserveSize) {
     this._queue = (reserveSize <= 0) ? [] : new Array(reserveSize);
-    this._b = 0; // iterator back
+    this._b = -1; // iterator back
     this._f = 0; // iterator front
 }
-Queue.prototype.empty = function () { return this._b <= this._f; }
-Queue.prototype.front = function () { return this.empty() ? null : this._queue[this._f]; }
+Queue.prototype.empty = function () { return this._b < this._f; }
+Queue.prototype.front = function () { return this._queue[this._f]; }
+Queue.prototype.back = function () { return this._queue[this._b]; }
 Queue.prototype.pop = function () { ++this._f; }
-Queue.prototype.push = function (x) { this._queue[this._b] = x; ++this._b; }
+Queue.prototype.push = function (x) { this._queue[++this._b] = x; }
+Queue.prototype.size = function () { return this._b - this._f + 1; }
+
+// =========================================================== //
+function Queue() { this._initialize.apply(this, arguments); }
+Queue.prototype._initialize = function () { this._queue = []; }
+Queue.prototype.empty = function () { return !this._queue.length; }
+Queue.prototype.front = function () { return this._queue[0]; }
+Queue.prototype.back = function () { return this._queue[this._queue.length - 1]; }
+Queue.prototype.pop = function () { return this._queue.shift(); }
+Queue.prototype.push = function (x) { this._queue.push(x); }
+Queue.prototype.size = function () { return this._queue.length; }
 
 // ==================================================
 //  Trie
@@ -333,6 +429,10 @@ function f0nd(x, n) {
     let [t, digit] = [x, 1];
     while ((t = Math.floor(t * 0.1))) ++digit;
     return new Array(n - digit + 1).join("0") + x;
+}
+function getTimeStr(str) {
+    const [hh, mm, ss] = str.split(":").map(x => +x);
+    return hh * 3600 + mm * 60 + ss;
 }
 function getTime(hh, mm, ss) {
     return hh * 3600 + mm * 60 + ss;
@@ -567,6 +667,12 @@ setInterval(() => {
 // =========================================================== //
 const input = require("fs").readFileSync("dev/stdin").toString().trim().split(/\n+/).map((x) => x.trim().split(/\s+/).map((x) => +x));
 process.stdout.write(solution(input) || "");
+process.exit(0);
+
+// =========================================================== //
+const input = require("fs").readFileSync("dev/stdin").toString().trim().split(/\n+/).map(x => +x);
+solution(input);
+process.stdout.write(output);
 process.exit(0);
 
 // ==================================================
